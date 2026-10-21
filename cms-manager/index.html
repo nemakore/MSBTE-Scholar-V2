@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MSBTE Scholar 2.0 • Blogger CMS Post Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #FAF6EE;
+      --card-bg: #FFFFFF;
+      --text: #141414;
+      --text-muted: #5F5B52;
+      --emerald: #0B3B2E;
+      --emerald-dark: #062D24;
+      --emerald-soft: #E7F2EE;
+      --gold: #D4AF37;
+      --gold-soft: #F1DFA4;
+      --border: #E6DCC6;
+      --red: #B3202F;
+      --green: #1FA971;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    h1, h2, h3, h4, .brand { font-family: 'Plus Jakarta Sans', sans-serif; }
+    header {
+      background: var(--emerald-dark);
+      color: #FAF6EE;
+      border-bottom: 2px solid var(--emerald);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+    .brand-wrap { display: flex; align-items: center; gap: 0.75rem; }
+    .brand-badge {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--emerald) 0%, #041D17 100%);
+      border: 1.5px solid var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; color: var(--gold); font-size: 1rem;
+    }
+    .brand-title { font-size: 1.15rem; font-weight: 900; letter-spacing: -0.02em; }
+    .brand-sub { font-size: 0.7rem; color: var(--gold-soft); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .btn-action-bar { display: flex; align-items: center; gap: 0.75rem; }
+    .btn {
+      padding: 0.55rem 1rem; border-radius: 10px; font-size: 0.78rem; font-weight: 700;
+      border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem;
+      transition: all 0.15s ease; text-decoration: none;
+    }
+    .btn-gold {
+      background: var(--gold); color: var(--emerald-dark); font-weight: 800;
+      box-shadow: 0 2px 8px rgba(212,175,55,0.25);
+    }
+    .btn-gold:hover { background: #c59f2a; transform: translateY(-1px); }
+    .btn-outline {
+      background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2);
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.18); }
+    .btn-emerald {
+      background: var(--emerald); color: #fff; border: 1px solid var(--emerald);
+    }
+    .btn-emerald:hover { background: var(--emerald-dark); }
+    .btn-secondary {
+      background: var(--card-bg); color: var(--emerald); border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: var(--emerald-soft); border-color: var(--emerald); }
+
+    /* Main Workspace Layout */
+    .app-container {
+      display: grid;
+      grid-template-columns: 280px 1fr 1fr;
+      flex: 1;
+      height: calc(100vh - 65px);
+      overflow: hidden;
+    }
+    @media (max-width: 1100px) {
+      .app-container {
+        grid-template-columns: 240px 1fr;
+        height: auto;
+        overflow: auto;
+      }
+      .col-preview { grid-column: span 2; height: 800px; }
+    }
+    @media (max-width: 768px) {
+      .app-container {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+      }
+    }
+
+    /* Col 1: Categories Sidebar */
+    .col-categories {
+      background: #FFFFFF;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .sidebar-head {
+      padding: 1rem; border-bottom: 1px solid var(--border);
+      background: #FAF6EE;
+    }
+    .sidebar-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+    .category-list { padding: 0.5rem; display: flex; flex-direction: column; gap: 0.25rem; }
+    .cat-btn {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.65rem 0.85rem; border-radius: 12px; font-size: 0.8rem;
+      font-weight: 700; color: var(--text); border: 1px solid transparent;
+      background: transparent; cursor: pointer; text-align: left; transition: all 0.15s;
+    }
+    .cat-btn:hover { background: var(--bg); color: var(--emerald); }
+    .cat-btn.active {
+      background: var(--emerald-soft); border-color: rgba(11,59,46,0.3);
+      color: var(--emerald); border-left: 4px solid var(--gold);
+    }
+    .cat-pill {
+      font-size: 0.65rem; padding: 0.15rem 0.45rem; border-radius: 6px;
+      background: rgba(11,59,46,0.08); font-weight: 800;
+    }
+    .cat-btn.active .cat-pill {
+      background: var(--emerald); color: var(--gold);
+    }
+
+    /* Col 2: Form Editor */
+    .col-form {
+      background: #FAFAFA;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .pane-head {
+      padding: 1rem 1.25rem; background: #FFFFFF;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .pane-title { font-size: 1rem; font-weight: 800; color: var(--emerald); }
+    .pane-sub { font-size: 0.72rem; color: var(--text-muted); }
+    .form-body { padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-label { font-size: 0.75rem; font-weight: 700; color: var(--text); display: flex; justify-content: space-between; }
+    .form-hint { font-size: 0.68rem; color: var(--text-muted); font-weight: normal; }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; padding: 0.6rem 0.75rem; font-size: 0.82rem; font-family: inherit;
+      border: 1px solid var(--border); border-radius: 8px; background: #FFFFFF;
+      outline: none; transition: border 0.15s; color: var(--text);
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--emerald);
+      box-shadow: 0 0 0 2px rgba(11,59,46,0.1);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; }
+
+    /* Col 3: Live Preview & HTML Code */
+    .col-preview {
+      background: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .tabs-bar {
+      display: flex; background: #FAF6EE; border-bottom: 1px solid var(--border);
+      padding: 0.5rem 1rem; gap: 0.5rem; position: sticky; top: 0; z-index: 10;
+      justify-content: space-between; align-items: center;
+    }
+    .tab-group { display: flex; gap: 0.5rem; }
+    .tab-btn {
+      padding: 0.4rem 0.85rem; border-radius: 8px; font-size: 0.75rem; font-weight: 700;
+      border: 1px solid transparent; background: transparent; cursor: pointer; color: var(--text-muted);
+    }
+    .tab-btn.active {
+      background: #FFFFFF; color: var(--emerald); border-color: var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    /* Preview Canvas */
+    .preview-canvas {
+      padding: 1.5rem; flex: 1; background: #FAF6EE;
+      overflow-y: auto;
+    }
+    .preview-card {
+      background: #FFFFFF; border-radius: 1.25rem; border: 1px solid var(--border);
+      padding: 1.75rem; box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+      max-width: 720px; margin: 0 auto;
+    }
+
+    /* Code View */
+    .code-view {
+      display: none; flex: 1; padding: 1rem; background: #062D24;
+      flex-direction: column; gap: 0.75rem;
+    }
+    .code-view.active { display: flex; }
+    .code-box {
+      flex: 1; width: 100%; background: #041D17; color: #F1DFA4;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+      padding: 1rem; border-radius: 8px; border: 1px solid #0B3B2E;
+      resize: none; outline: none; line-height: 1.5;
+    }
+    .labels-chip-box {
+      background: #FFFFFF; border: 1px solid var(--border); border-radius: 8px;
+      padding: 0.5rem 0.75rem; display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.75rem;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      background: var(--emerald-dark); color: #FAF6EE;
+      padding: 0.75rem 1.25rem; border-radius: 10px; font-size: 0.8rem;
+      font-weight: 700; border: 1px solid var(--gold);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      transform: translateY(100px); opacity: 0; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* Blogger Post Templates Styling inside Preview */
+    .post-badge {
+      display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px;
+      font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+      background: #E7F2EE; color: #0B3B2E; border: 1px solid rgba(11,59,46,0.2);
+      margin-bottom: 0.5rem;
+    }
+    .post-title-rendered {
+      font-size: 1.4rem; font-weight: 900; color: #0B3B2E; line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+    .post-meta-line {
+      display: flex; gap: 0.75rem; font-size: 0.72rem; color: #5F5B52;
+      padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem; flex-wrap: wrap;
+    }
+    .post-box-alert {
+      background: #FAF6EE; border-left: 4px solid var(--gold);
+      padding: 0.75rem 1rem; border-radius: 0 8px 8px 0; font-size: 0.8rem;
+      line-height: 1.5; margin: 1rem 0;
+    }
+    .post-dl-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.85rem 1.6rem; border-radius: 12px;
+      background: linear-gradient(135deg, #0B3B2E 0%, #062D24 100%);
+      color: #FAF6EE !important; font-weight: 800; font-size: 0.85rem;
+      text-decoration: none; box-shadow: 0 4px 14px rgba(11,59,46,0.25);
+      margin: 1rem 0;
+    }
+    .post-table {
+      width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.78rem;
+      border-radius: 8px; overflow: hidden; border: 1px solid var(--border);
+    }
+    .post-table th { background: #0B3B2E; color: white; padding: 0.5rem 0.75rem; text-align: left; }
+    .post-table td { padding: 0.5rem 0.75rem; border-top: 1px solid var(--border); }
+    .post-table tr:nth-child(even) { background: #FAF6EE; }
+    .mcq-box {
+      border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem; margin-bottom: 0.75rem;
+      background: #FAFAFA;
+    }
+    .mcq-q { font-weight: 700; font-size: 0.82rem; margin-bottom: 0.5rem; color: #0B3B2E; }
+    .mcq-opt { font-size: 0.76rem; padding: 0.25rem 0.5rem; margin-bottom: 0.25rem; border-radius: 6px; }
+    .mcq-opt.correct { background: #E7F7EE; color: #1FA971; font-weight: 700; border: 1px solid rgba(31,169,113,0.3); }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="brand-wrap">
+      <div class="brand-badge">MS</div>
+      <div>
+        <div class="brand-title">MSBTE Scholar <span style="color:var(--gold);">2.0</span> Post Studio</div>
+        <div class="brand-sub">Universal 13-in-1 Blogger Content Creator</div>
+      </div>
+    </div>
+    <div class="btn-action-bar">
+      <button class="btn btn-outline" onclick="fillDemoData()">🪄 Fill Sample Data</button>
+      <button class="btn btn-gold" onclick="copyGeneratedHtml()">📋 Copy Blogger HTML</button>
+      <a href="https://draft.blogger.com/blog/posts" target="_blank" class="btn btn-emerald" title="Open Blogger Post Editor">
+        ✍️ New Blogger Post ↗
+      </a>
+    </div>
+  </header>
+
+  <!-- Workspace Grid Layout -->
+  <div class="app-container">
+
+    <!-- Column 1: 13 Categories Selector -->
+    <div class="col-categories">
+      <div class="sidebar-head">
+        <div class="sidebar-title">Select Content Type (13 Pages)</div>
+      </div>
+      <div class="category-list" id="categoryList">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- Column 2: Interactive Dynamic Form Editor -->
+    <div class="col-form">
+      <div class="pane-head">
+        <div>
+          <div class="pane-title" id="formCategoryTitle">Study Notes</div>
+          <div class="pane-sub" id="formCategorySub">Create formatted MSBTE K-Scheme handwritten notes post</div>
+        </div>
+        <button class="btn btn-secondary" onclick="resetForm()">Reset</button>
+      </div>
+      <div class="form-body" id="dynamicFormFields">
+        <!-- Injected dynamically based on category -->
+      </div>
+    </div>
+
+    <!-- Column 3: Live Preview & HTML Generator -->
+    <div class="col-preview">
+      <div class="tabs-bar">
+        <div class="tab-group">
+          <button class="tab-btn active" id="tabBtnPreview" onclick="switchTab('preview')">👁️ Live Post Preview</button>
+          <button class="tab-btn" id="tabBtnCode" onclick="switchTab('code')">&lt;/&gt; Raw Blogger HTML</button>
+        </div>
+        <button class="btn btn-gold" style="padding: 0.35rem 0.75rem; font-size: 0.72rem;" onclick="copyGeneratedHtml()">Copy HTML</button>
+      </div>
+
+      <!-- Live Visual Preview Canvas -->
+      <div class="preview-canvas" id="previewCanvas">
+        <div class="preview-card" id="renderedPreview">
+          <!-- Live HTML rendered here -->
+        </div>
+      </div>
+
+      <!-- Blogger Ready HTML Code View -->
+      <div class="code-view" id="codeView">
+        <div class="labels-chip-box">
+          <span><strong>Blogger Labels to Add:</strong> <code id="lblText" style="color:#0B3B2E; font-weight:bold;">Notes, CO, Sem4, K-Scheme</code></span>
+          <button class="btn btn-secondary" style="padding:0.25rem 0.5rem; font-size:0.7rem;" onclick="copyLabels()">Copy Labels</button>
+        </div>
+        <textarea class="code-box" id="rawHtmlCode" readonly></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Toast Pop-up -->
+  <div class="toast" id="toastMessage">
+    <span>✅</span>
+    <span id="toastText">Copied to Clipboard!</span>
+  </div>
+
+  <script>
+    // 13 Master Categories Definition with presets
+    const CATEGORIES = [
+      { id: 'notes', name: '1. Handwritten Notes', icon: '📚', sub: 'Chapter-wise master notes with PDF download' },
+      { id: 'manuals', name: '2. Solved Lab Manuals', icon: '🔬', sub: 'Completed practical experiments & queries' },
+      { id: 'model_papers', name: '3. Model Question Papers', icon: '📝', sub: 'Official board QP & solved model answers' },
+      { id: 'syllabus', name: '4. K-Scheme Syllabus', icon: '📋', sub: 'Curriculum, credit hours & mark distributions' },
+      { id: 'mock_tests', name: '5. MCQ Mock Tests', icon: '🎯', sub: 'Timed multiple choice questions with answers' },
+      { id: 'jobs', name: '6. Jobs & Apprenticeships', icon: '💼', sub: 'Verified diploma vacancies with direct apply links' },
+      { id: 'projects', name: '7. Capstone Project Hub', icon: '🚀', sub: 'Final year projects, synopsis & viva Q&A' },
+      { id: 'circulars', name: '8. MSBTE Official Updates', icon: '📢', sub: 'Timetable, hall ticket & result circulars' },
+      { id: 'career', name: '9. Career Roadmaps', icon: '🎓', sub: 'After diploma pathways (DSE, Govt, Private)' },
+      { id: 'courses', name: '10. Diploma Courses', icon: '💻', sub: 'Full stack, CAD, Python skill masterclasses' },
+      { id: 'community', name: '11. Student Community', icon: '👥', sub: 'Discussion topics, solved peer doubts' },
+      { id: 'alerts', name: '12. Urgent Notifications', icon: '⚠️', sub: 'Deadline reminders, emergency board alerts' },
+      { id: 'static_page', name: '13. Static Pages', icon: '📄', sub: 'About Us, Contact, Disclaimer, Privacy Policy' },
+    ];
+
+    let currentCategoryId = 'notes';
+
+    // State data stores
+    const formData = {
+      notes: {
+        title: 'DBMS Complete Handwritten Master Notes (Units 1-6)',
+        branch: 'CO',
+        semester: '4',
+        subjectName: 'Database Management System',
+        subjectCode: '314303',
+        units: 'Unit 1: Architecture, Unit 2: Relational Model, Unit 3: SQL, Unit 4: Normalization, Unit 5: Transactions, Unit 6: PL/SQL',
+        pdfUrl: 'https://drive.google.com/uc?export=download&id=DEMO_NOTES_PDF_LINK',
+        fileSize: '4.8 MB',
+        author: 'Prof. Dikshant Shahare (MSBTE Scholar Topper)',
+        desc: 'Handwritten notes strictly based on MSBTE K-Scheme curriculum with solved ER diagrams, normalization steps, and practical SQL queries.'
+      },
+      manuals: {
+        title: 'Solved Lab Manual for Database Management System (314303)',
+        branch: 'CO',
+        semester: '4',
+        subjectName: 'DBMS Lab',
+        subjectCode: '314303',
+        practicalsCount: '16 Practicals Solved',
+        pdfUrl: 'https://drive.google.com/uc?export=download&id=DEMO_MANUAL_PDF_LINK',
+        fileSize: '6.2 MB',
+        softwareUsed: 'Oracle 11g Express Edition / MySQL 8.0',
+        desc: 'All 16 practical experiments with verified outputs, table creation scripts, joins, triggers, and PL/SQL procedures.'
+      },
+      model_papers: {
+        title: 'Summer 2025 Official Model Answer & Question Paper',
+        branch: 'CO',
+        semester: '4',
+        subjectName: 'Database Management System',
+        subjectCode: '314303',
+        examSeason: 'Summer 2025',
+        qpPdfUrl: 'https://drive.google.com/uc?export=download&id=DEMO_QP_LINK',
+        maPdfUrl: 'https://drive.google.com/uc?export=download&id=DEMO_MA_LINK',
+        desc: 'Official MSBTE Summer 2025 question paper with board marking scheme and model answers for reference.'
+      },
+      syllabus: {
+        title: 'K-Scheme Official Curriculum: Database Management System',
+        branch: 'CO',
+        semester: '4',
+        subjectName: 'Database Management System (DBMS)',
+        subjectCode: '314303',
+        credits: '5 Credits (Theory: 3, Practical: 2)',
+        theoryMarks: '70 ESE + 30 PA = 100 Marks',
+        practicalMarks: '25 ESE + 25 PA = 50 Marks',
+        syllabusPdfUrl: 'https://drive.google.com/uc?export=download&id=DEMO_SYLLABUS_PDF',
+        desc: 'Comprehensive teaching scheme, course outcomes (COs), unit-wise mark distribution, and recommended reference textbooks.'
+      },
+      mock_tests: {
+        title: 'MSBTE Online Mock Test Drill: DBMS SQL & Normalization',
+        subjectName: 'DBMS (314303)',
+        topic: 'SQL Queries, Subqueries & 1NF/2NF/3NF Normalization',
+        duration: '20 Minutes',
+        totalQuestions: '10 MCQs',
+        q1: 'Which SQL command is used to remove a relation schema and all its tuples?',
+        q1_opts: 'A) DELETE\nB) REMOVE\nC) DROP TABLE\nD) TRUNCATE',
+        q1_ans: 'C) DROP TABLE',
+        q1_exp: 'DROP TABLE removes both the data and the table definition from the database dictionary.'
+      },
+      jobs: {
+        company: 'Tata Consultancy Services (TCS)',
+        logoUrl: 'https://images.unsplash.com/photo-1549923746-c502d488b3ea?w=120&auto=format&fit=crop&q=80',
+        role: 'Diploma Trainee Engineer (DTE) 2026 Batch',
+        salary: '₹2.8 LPA - ₹3.4 LPA',
+        location: 'Pune / Mumbai, Maharashtra',
+        eligibility: 'Diploma in Computer / IT / Electronics (Passing 2026 or 2025)',
+        applyUrl: 'https://www.tcs.com/careers/india/smart-hiring',
+        lastDate: '30 November 2026',
+        desc: 'TCS Smart Hiring drive for polytechnic diploma students with permanent placement, medical insurance, and higher education sponsorship.'
+      },
+      projects: {
+        title: 'Smart Polytechnic Campus Attendance System using ESP32 & RFID',
+        domain: 'Internet of Things (IoT) & Cloud Embedded Systems',
+        branch: 'CO / IT / EJ',
+        components: 'ESP32 Wi-Fi Module, RC522 RFID Reader, OLED Display, Firebase Realtime Database',
+        vivaQ1: 'What is the frequency of RC522 RFID reader? Ans: 13.56 MHz.',
+        vivaQ2: 'Why choose ESP32 over Arduino Uno? Ans: Built-in Wi-Fi and Bluetooth with dual-core processing.',
+        synopsisUrl: 'https://drive.google.com/uc?export=download&id=DEMO_SYNOPSIS_PDF',
+        pptUrl: 'https://drive.google.com/uc?export=download&id=DEMO_PPT_LINK',
+        desc: 'Complete final year diploma capstone project with circuit diagram, PCB layout, Arduino C++ firmware, and examiner viva Q&A.'
+      },
+      circulars: {
+        title: 'MSBTE Winter 2026 Examination Final Time Table Released',
+        refNumber: 'MSBTE/D-40/W-26/EXAM/8942',
+        date: '21 October 2026',
+        isUrgent: 'Urgent Alert',
+        pdfUrl: 'https://msbte.ac.in/portal/circulars/',
+        desc: 'The Maharashtra State Board of Technical Education has officially published the theory and practical exam time table for all K-Scheme and I-Scheme branches.'
+      },
+      career: {
+        title: 'Direct Second Year B.Tech Engineering (DSE 2026) Complete Roadmap',
+        targetBranch: 'Computer & Information Technology',
+        topColleges: 'COEP Pune, VJTI Mumbai, SPIT Mumbai, Walchand Sangli',
+        cutoffEstimate: '92.50% - 98.40% aggregate marks in 5th and 6th semester',
+        desc: 'Step-by-step admission process, document checklist (Domicile, Non-Creamy Layer, Caste Validity), and CAP round choice filling tips.'
+      },
+      courses: {
+        title: 'Full Stack Web Development for Diploma Students Masterclass',
+        instructor: 'Senior Industry Engineer',
+        duration: '8 Weeks (Self-Paced with Certificate)',
+        modules: 'HTML5, Modern CSS, JavaScript ES6+, React 18, Node.js, Express & MongoDB',
+        enrollUrl: 'https://www.msbtescholar.com/#courses',
+        desc: 'Practical, project-based web development course designed specifically for polytechnic diploma students looking for high-paying internships.'
+      },
+      community: {
+        title: 'How to prepare for DBMS External Viva & Lab Oral Exam?',
+        author: 'Dikshant Shahare (CO Topper)',
+        solution: 'Focus on ER Diagrams, Keys (Primary vs Foreign vs Candidate), SQL Joins, and Normalization up to 3NF. Be ready to write SQL queries on paper!',
+        tags: 'DBMS, Viva-Tips, Practicals'
+      },
+      alerts: {
+        title: 'Deadline Alert: Last Date for Exam Form Submission with Normal Fees',
+        deadline: '28 October 2026 (5:00 PM)',
+        fineDetails: 'Late fee of ₹200 will be applicable from 29 October to 02 November.',
+        actionUrl: 'https://msbte.ac.in',
+        desc: 'All diploma students must verify their subject codes and confirm their examination forms through candidate login.'
+      },
+      static_page: {
+        title: 'About MSBTE Scholar 2.0 • Empowering Diploma Students',
+        subtitle: 'Maharashtra\'s #1 Open-Access Educational Portal for Polytechnic Engineers',
+        mission: 'To provide free, verified, and high-quality educational resources, handwritten master notes, solved laboratory manuals, and career opportunities to every polytechnic student in Maharashtra.',
+        contactEmail: 'support@msbtescholar.com',
+        whatsappHelp: '+91 9876543210'
+      }
+    };
+
+    // Initialize UI
+    function init() {
+      renderCategoryList();
+      renderFormFields(currentCategoryId);
+      updatePreviewAndCode();
+    }
+
+    // Render left category sidebar
+    function renderCategoryList() {
+      const container = document.getElementById('categoryList');
+      container.innerHTML = CATEGORIES.map((cat, i) => `
+        <button class="cat-btn ${cat.id === currentCategoryId ? 'active' : ''}" onclick="selectCategory('${cat.id}')">
+          <div style="display:flex; align-items:center; gap:0.5rem; overflow:hidden;">
+            <span>${cat.icon}</span>
+            <span style="truncate:true; text-overflow:ellipsis; white-space:nowrap; overflow:hidden;">${cat.name}</span>
+          </div>
+          <span class="cat-pill">${cat.id.toUpperCase()}</span>
+        </button>
+      `).join('');
+    }
+
+    // Switch Category
+    function selectCategory(id) {
+      currentCategoryId = id;
+      const cat = CATEGORIES.find(c => c.id === id);
+      document.getElementById('formCategoryTitle').textContent = cat.name;
+      document.getElementById('formCategorySub').textContent = cat.sub;
+      renderCategoryList();
+      renderFormFields(id);
+      updatePreviewAndCode();
+    }
+
+    // Dynamically render input fields for selected category
+    function renderFormFields(id) {
+      const container = document.getElementById('dynamicFormFields');
+      const data = formData[id];
+      let fieldsHtml = '';
+
+      switch (id) {
+        case 'notes':
+          fieldsHtml = `
+            <div class="form-group">
+              <label class="form-label">Post Title</label>
+              <input type="text" class="form-input" id="f_title" value="${data.title}" oninput="syncField('notes', 'title', this.value)"/>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Branch</label>
+                <select class="form-select" id="f_branch" onchange="syncField('notes', 'branch', this.value)">
+                  <option value="CO" ${data.branch === 'CO' ? 'selected' : ''}>Computer Engineering (CO)</option>
+                  <option value="IT" ${data.branch === 'IT' ? 'selected' : ''}>Information Technology (IT)</option>
+                  <option value="ME" ${data.branch === 'ME' ? 'selected' : ''}>Mechanical Engineering (ME)</option>
+                  <option value="EE" ${data.branch === 'EE' ? 'selected' : ''}>Electrical Engineering (EE)</option>
+                  <option value="CE" ${data.branch === 'CE' ? 'selected' : ''}>Civil Engineering (CE)</option>
+                  <option value="EJ" ${data.branch === 'EJ' ? 'selected' : ''}>Electronics (EJ/EXTC)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Semester</label>
+                <select class="form-select" id="f_sem" onchange="syncField('notes', 'semester', this.value)">
+                  <option value="1" ${data.semester === '1' ? 'selected' : ''}>Semester 1</option>
+                  <option value="2" ${data.semester === '2' ? 'selected' : ''}>Semester 2</option>
+                  <option value="3" ${data.semester === '3' ? 'selected' : ''}>Semester 3</option>
+                  <option value="4" ${data.semester === '4' ? 'selected' : ''}>Semester 4</option>
+                  <option value="5" ${data.semester === '5' ? 'selected' : ''}>Semester 5</option>
+                  <option value="6" ${data.semester === '6' ? 'selected' : ''}>Semester 6</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Subject Name</label>
+                <input type="text" class="form-input" id="f_subject" value="${data.subjectName}" oninput="syncField('notes', 'subjectName', this.value)"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Subject Code</label>
+                <input type="text" class="form-input" id="f_code" value="${data.subjectCode}" oninput="syncField('notes', 'subjectCode', this.value)"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Units / Syllabus Covered</label>
+              <input type="text" class="form-input" id="f_units" value="${data.units}" oninput="syncField('notes', 'units', this.value)"/>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">PDF Direct Download URL (Google Drive / CDN)</label>
+                <input type="text" class="form-input" id="f_pdf" value="${data.pdfUrl}" oninput="syncField('notes', 'pdfUrl', this.value)"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">File Size</label>
+                <input type="text" class="form-input" id="f_size" value="${data.fileSize}" oninput="syncField('notes', 'fileSize', this.value)"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Notes Description & Key Highlights</label>
+              <textarea class="form-textarea" rows="3" id="f_desc" oninput="syncField('notes', 'desc', this.value)">${data.desc}</textarea>
+            </div>
+          `;
+          break;
+
+        case 'manuals':
+          fieldsHtml = `
+            <div class="form-group">
+              <label class="form-label">Manual Title</label>
+              <input type="text" class="form-input" id="f_title" value="${data.title}" oninput="syncField('manuals', 'title', this.value)"/>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Subject Name & Code</label>
+                <input type="text" class="form-input" id="f_subject" value="${data.subjectName} (${data.subjectCode})" oninput="syncField('manuals', 'subjectName', this.value)"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Practicals Solved</label>
+                <input type="text" class="form-input" id="f_practicals" value="${data.practicalsCount}" oninput="syncField('manuals', 'practicalsCount', this.value)"/>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Solved PDF URL</label>
+                <input type="text" class="form-input" id="f_pdf" value="${data.pdfUrl}" oninput="syncField('manuals', 'pdfUrl', this.value)"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">File Size</label>
+                <input type="text" class="form-input" id="f_size" value="${data.fileSize}" oninput="syncField('manuals', 'fileSize', this.value)"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Software / Tools Used</label>
+              <input type="text" class="form-input" id="f_software" value="${data.softwareUsed}" oninput="syncField('manuals', 'softwareUsed', this.value)"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Lab Description</label>
+              <textarea class="form-textarea" rows="3" id="f_desc" oninput="syncField('manuals', 'desc', this.value)">${data.desc}</textarea>
+            </div>
+          `;
+          break;
+
+        case 'jobs':
+          fieldsHtml = `
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Company Name</label>
+                <input type="text" class="form-input" id="f_company" value="${data.company}" oninput="syncField('jobs', 'company', this.value)"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Role / Job Title</label>
+                <input type="text" class="form-input" id="f_role" value="${data.role}" oninput="syncField('jobs', 'role', this.value)"/>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Salary / Monthly Stipend</label>
+                <input type="text" class="form-input" id="f_salary" value="${data.salary}" oninput="syncField('jobs', 'salary', this.value)"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Job Location</label>
+                <input type="text" class="form-input" id="f_loc" value="${data.location}" oninput="syncField('jobs', 'location', this.value)"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Eligible Diploma Branches</label>
+              <input type="text" class="form-input" id="f_eligibility" value="${data.eligibility}" oninput="syncField('jobs', 'eligibility', this.value)"/>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Official Apply URL</label>
+                <input type="text" class="form-input" id="f_applyUrl" value="${data.applyUrl}" oninput="syncField('jobs', 'applyUrl', this.value)"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Last Date to Apply</label>
+                <input type="text" class="form-input" id="f_lastDate" value="${data.lastDate}" oninput="syncField('jobs', 'lastDate', this.value)"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Job Description & Perks</label>
+              <textarea class="form-textarea" rows="3" id="f_desc" oninput="syncField('jobs', 'desc', this.value)">${data.desc}</textarea>
+            </div>
+          `;
+          break;
+
+        case 'mock_tests':
+          fieldsHtml = `
+            <div class="form-group">
+              <label class="form-label">Mock Exam Title</label>
+              <input type="text" class="form-input" id="f_title" value="${data.title}" oninput="syncField('mock_tests', 'title', this.value)"/>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Subject</label>
+                <input type="text" class="form-input" id="f_subj" value="${data.subjectName}" oninput="syncField('mock_tests', 'subjectName', this.value)"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Topic / Unit</label>
+                <input type="text" class="form-input" id="f_topic" value="${data.topic}" oninput="syncField('mock_tests', 'topic', this.value)"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Sample Question 1</label>
+              <input type="text" class="form-input" id="f_q1" value="${data.q1}" oninput="syncField('mock_tests', 'q1', this.value)"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Options (Line-separated)</label>
+              <textarea class="form-textarea" rows="3" id="f_q1_opts" oninput="syncField('mock_tests', 'q1_opts', this.value)">${data.q1_opts}</textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Correct Option</label>
+                <input type="text" class="form-input" id="f_q1_ans" value="${data.q1_ans}" oninput="syncField('mock_tests', 'q1_ans', this.value)"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Explanation</label>
+                <input type="text" class="form-input" id="f_q1_exp" value="${data.q1_exp}" oninput="syncField('mock_tests', 'q1_exp', this.value)"/>
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'projects':
+          fieldsHtml = `
+            <div class="form-group">
+              <label class="form-label">Capstone Project Title</label>
+              <input type="text" class="form-input" id="f_title" value="${data.title}" oninput="syncField('projects', 'title', this.value)"/>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Project Domain</label>
+                <input type="text" class="form-input" id="f_domain" value="${data.domain}" oninput="syncField('projects', 'domain', this.value)"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Branch</label>
+                <input type="text" class="form-input" id="f_branch" value="${data.branch}" oninput="syncField('projects', 'branch', this.value)"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hardware & Software Components</label>
+              <input type="text" class="form-input" id="f_comp" value="${data.components}" oninput="syncField('projects', 'components', this.value)"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Top Viva Question 1</label>
+              <input type="text" class="form-input" id="f_viva1" value="${data.vivaQ1}" oninput="syncField('projects', 'vivaQ1', this.value)"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Top Viva Question 2</label>
+              <input type="text" class="form-input" id="f_viva2" value="${data.vivaQ2}" oninput="syncField('projects', 'vivaQ2', this.value)"/>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Synopsis Download PDF</label>
+                <input type="text" class="form-input" id="f_synopsis" value="${data.synopsisUrl}" oninput="syncField('projects', 'synopsisUrl', this.value)"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Presentation PPT URL</label>
+                <input type="text" class="form-input" id="f_ppt" value="${data.pptUrl}" oninput="syncField('projects', 'pptUrl', this.value)"/>
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'circulars':
+          fieldsHtml = `
+            <div class="form-group">
+              <label class="form-label">Circular Title</label>
+              <input type="text" class="form-input" id="f_title" value="${data.title}" oninput="syncField('circulars', 'title', this.value)"/>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Board Reference Number</label>
+                <input type="text" class="form-input" id="f_ref" value="${data.refNumber}" oninput="syncField('circulars', 'refNumber', this.value)"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Release Date</label>
+                <input type="text" class="form-input" id="f_date" value="${data.date}" oninput="syncField('circulars', 'date', this.value)"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Official Circular PDF Link</label>
+              <input type="text" class="form-input" id="f_pdf" value="${data.pdfUrl}" oninput="syncField('circulars', 'pdfUrl', this.value)"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Notice Summary</label>
+              <textarea class="form-textarea" rows="3" id="f_desc" oninput="syncField('circulars', 'desc', this.value)">${data.desc}</textarea>
+            </div>
+          `;
+          break;
+
+        default:
+          fieldsHtml = `
+            <div class="form-group">
+              <label class="form-label">Post Title</label>
+              <input type="text" class="form-input" id="f_title" value="${data.title}" oninput="syncField('${id}', 'title', this.value)"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description / Content</label>
+              <textarea class="form-textarea" rows="5" id="f_desc" oninput="syncField('${id}', 'desc', this.value)">${data.desc || data.mission || ''}</textarea>
+            </div>
+          `;
+          break;
+      }
+
+      container.innerHTML = fieldsHtml;
+    }
+
+    // Sync input to memory
+    function syncField(catId, field, val) {
+      if (!formData[catId]) formData[catId] = {};
+      formData[catId][field] = val;
+      updatePreviewAndCode();
+    }
+
+    // Generate formatted Blogger HTML and preview
+    function generateHtml(id) {
+      const d = formData[id];
+      let bodyHtml = '';
+      let labels = '';
+
+      switch (id) {
+        case 'notes':
+          labels = `Notes, ${d.branch}, Sem${d.semester}, ${d.subjectCode}, K-Scheme`;
+          bodyHtml = `
+<div class="post-badge">K-Scheme Verified Notes • Semester ${d.semester}</div>
+<h2 class="post-title-rendered">${d.title}</h2>
+<div class="post-meta-line">
+  <span>📚 Subject: <strong>${d.subjectName} (${d.subjectCode})</strong></span>
+  <span>🏫 Branch: <strong>${d.branch} Engineering</strong></span>
+  <span>💾 Size: <strong>${d.fileSize}</strong></span>
+  <span>✍️ Verified By: <strong>${d.author}</strong></span>
+</div>
+
+<p>${d.desc}</p>
+
+<div class="post-box-alert">
+  <strong>📌 Units Included in this PDF:</strong><br/>
+  ${d.units}
+</div>
+
+<table class="post-table">
+  <tr><th>Feature</th><th>Details</th></tr>
+  <tr><td>Scheme Type</td><td>MSBTE K-Scheme 2026 Curriculum</td></tr>
+  <tr><td>Coverage</td><td>100% Theory & Solved Numericals</td></tr>
+  <tr><td>Handwritten Clarity</td><td>High Definition Digitally Scanned (OCR)</td></tr>
+  <tr><td>Security</td><td>Verified & Scanned Virus-Free</td></tr>
+</table>
+
+<div style="text-align: center; margin: 2rem 0;">
+  <a href="${d.pdfUrl}" target="_blank" class="post-dl-btn">
+    ⬇️ Download Handwritten Notes PDF (${d.fileSize})
+  </a>
+  <p style="font-size:0.75rem; color:#5F5B52; margin-top:0.5rem;">Direct Google Drive download • Zero ads • High speed</p>
+</div>
+          `;
+          break;
+
+        case 'manuals':
+          labels = `Manuals, Solved, Lab, Sem${d.semester || '4'}, K-Scheme`;
+          bodyHtml = `
+<div class="post-badge">100% Verified Lab Solutions</div>
+<h2 class="post-title-rendered">${d.title}</h2>
+<div class="post-meta-line">
+  <span>🔬 Course: <strong>${d.subjectName}</strong></span>
+  <span>📝 Practicals: <strong>${d.practicalsCount}</strong></span>
+  <span>💻 Software: <strong>${d.softwareUsed}</strong></span>
+</div>
+
+<p>${d.desc}</p>
+
+<div class="post-box-alert">
+  <strong>⚡ Lab Practicals Coverage:</strong><br/>
+  All experiments from Practical 1 to Practical 16 have been executed, verified, and outputs documented step-by-step.
+</div>
+
+<div style="text-align: center; margin: 2rem 0;">
+  <a href="${d.pdfUrl}" target="_blank" class="post-dl-btn">
+    ⬇️ Download Solved Lab Manual PDF (${d.fileSize})
+  </a>
+</div>
+          `;
+          break;
+
+        case 'jobs':
+          labels = `Jobs, Placement, DTE, Apprenticeship`;
+          bodyHtml = `
+<div class="post-badge" style="background:#E7F7EE; color:#1FA971;">Verified Placement Opening</div>
+<h2 class="post-title-rendered">${d.company}: ${d.role}</h2>
+<div class="post-meta-line">
+  <span>💰 Package / Stipend: <strong>${d.salary}</strong></span>
+  <span>📍 Location: <strong>${d.location}</strong></span>
+  <span>⏳ Last Date: <strong>${d.lastDate}</strong></span>
+</div>
+
+<p>${d.desc}</p>
+
+<div class="post-box-alert">
+  <strong>🎯 Eligibility Criteria:</strong><br/>
+  ${d.eligibility}
+</div>
+
+<table class="post-table">
+  <tr><th>Hiring Company</th><td>${d.company}</td></tr>
+  <tr><th>Designation</th><td>${d.role}</td></tr>
+  <tr><th>Job Category</th><td>Diploma Trainee Engineer (Technical / Core)</td></tr>
+  <tr><th>Selection Process</th><td>Online Aptitude Test + Technical & HR Interview</td></tr>
+</table>
+
+<div style="text-align: center; margin: 2rem 0;">
+  <a href="${d.applyUrl}" target="_blank" class="post-dl-btn" style="background:linear-gradient(135deg, #1FA971 0%, #0B3B2E 100%);">
+    🚀 Apply Now on Official Portal ↗
+  </a>
+</div>
+          `;
+          break;
+
+        case 'mock_tests':
+          labels = `MockTests, MCQs, Quiz, ${d.subjectName}`;
+          bodyHtml = `
+<div class="post-badge">Timed Multiple Choice Drill</div>
+<h2 class="post-title-rendered">${d.title}</h2>
+<div class="post-meta-line">
+  <span>🎯 Subject: <strong>${d.subjectName}</strong></span>
+  <span>⏱️ Duration: <strong>${d.duration}</strong></span>
+  <span>📝 Total: <strong>${d.totalQuestions}</strong></span>
+</div>
+
+<p>Test your conceptual understanding of <strong>${d.topic}</strong>. Review each question carefully and check the step-by-step explanation below.</p>
+
+<div class="mcq-box">
+  <div class="mcq-q">Q1. ${d.q1}</div>
+  <pre style="background:transparent; font-family:inherit; font-size:0.75rem; color:#141414; padding:0; margin-bottom:0.5rem;">${d.q1_opts}</pre>
+  <div class="mcq-opt correct">✅ Correct Answer: ${d.q1_ans}</div>
+  <p style="font-size:0.75rem; color:#5F5B52; margin-top:0.4rem;"><strong>Explanation:</strong> ${d.q1_exp}</p>
+</div>
+
+<div style="text-align: center; margin: 1.5rem 0;">
+  <a href="/#mock-tests" class="post-dl-btn">
+    🎯 Launch Full Interactive Timed Exam
+  </a>
+</div>
+          `;
+          break;
+
+        case 'projects':
+          labels = `Projects, Capstone, FinalYear, Viva`;
+          bodyHtml = `
+<div class="post-badge">Capstone Diploma Project Pack</div>
+<h2 class="post-title-rendered">${d.title}</h2>
+<div class="post-meta-line">
+  <span>🚀 Domain: <strong>${d.domain}</strong></span>
+  <span>🎓 Branch: <strong>${d.branch}</strong></span>
+</div>
+
+<p>${d.desc}</p>
+
+<div class="post-box-alert">
+  <strong>🛠️ Components & Technologies Used:</strong><br/>
+  ${d.components}
+</div>
+
+<div style="margin: 1.5rem 0;">
+  <h3 style="color:#0B3B2E; font-size:1.1rem; margin-bottom:0.75rem;">Top Examiner Viva Voce Questions:</h3>
+  <div class="mcq-box">
+    <strong>Q1:</strong> ${d.vivaQ1}
+  </div>
+  <div class="mcq-box">
+    <strong>Q2:</strong> ${d.vivaQ2}
+  </div>
+</div>
+
+<div style="text-align: center; margin: 1.5rem 0; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+  <a href="${d.synopsisUrl}" target="_blank" class="post-dl-btn">
+    ⬇️ Download Project Synopsis PDF
+  </a>
+  <a href="${d.pptUrl}" target="_blank" class="post-dl-btn" style="background:#041D17; border:1px solid var(--gold);">
+    📊 Download Presentation PPT
+  </a>
+</div>
+          `;
+          break;
+
+        case 'circulars':
+          labels = `Circulars, MSBTE, Notifications, Official`;
+          bodyHtml = `
+<div class="post-badge" style="background:#FDECEE; color:#B3202F;">${d.isUrgent}</div>
+<h2 class="post-title-rendered">${d.title}</h2>
+<div class="post-meta-line">
+  <span>📋 Board Ref: <strong>${d.refNumber}</strong></span>
+  <span>📅 Release Date: <strong>${d.date}</strong></span>
+</div>
+
+<p>${d.desc}</p>
+
+<div class="post-box-alert" style="border-left-color:#B3202F;">
+  <strong>⚠️ Important Advisory for Diploma Candidates:</strong><br/>
+  Students are advised to cross-check their enrolled scheme, subject codes, and hall ticket information with their respective institute coordinators immediately.
+</div>
+
+<div style="text-align: center; margin: 2rem 0;">
+  <a href="${d.pdfUrl}" target="_blank" class="post-dl-btn" style="background:linear-gradient(135deg, #B3202F 0%, #062D24 100%);">
+    📄 View Official Board Circular Notice ↗
+  </a>
+</div>
+          `;
+          break;
+
+        default:
+          labels = `${id.toUpperCase()}, MSBTE, Scholar`;
+          bodyHtml = `
+<div class="post-badge">Official Guide</div>
+<h2 class="post-title-rendered">${d.title}</h2>
+<p>${d.desc || d.mission || ''}</p>
+          `;
+          break;
+      }
+
+      return { bodyHtml: bodyHtml.trim(), labels };
+    }
+
+    // Refresh Preview and Code Box
+    function updatePreviewAndCode() {
+      const { bodyHtml, labels } = generateHtml(currentCategoryId);
+      document.getElementById('renderedPreview').innerHTML = bodyHtml;
+      document.getElementById('rawHtmlCode').value = bodyHtml;
+      document.getElementById('lblText').textContent = labels;
+    }
+
+    // Switch Tabs
+    function switchTab(mode) {
+      const isPreview = mode === 'preview';
+      document.getElementById('tabBtnPreview').classList.toggle('active', isPreview);
+      document.getElementById('tabBtnCode').classList.toggle('active', !isPreview);
+      document.getElementById('previewCanvas').style.display = isPreview ? 'block' : 'none';
+      document.getElementById('codeView').classList.toggle('active', !isPreview);
+    }
+
+    // Copy generated HTML
+    function copyGeneratedHtml() {
+      const html = document.getElementById('rawHtmlCode').value;
+      navigator.clipboard.writeText(html).then(() => {
+        showToast('Blogger Post HTML Copied to Clipboard!');
+      });
+    }
+
+    // Copy Labels
+    function copyLabels() {
+      const labels = document.getElementById('lblText').textContent;
+      navigator.clipboard.writeText(labels).then(() => {
+        showToast('Blogger Labels Copied: ' + labels);
+      });
+    }
+
+    // Show Toast
+    function showToast(msg) {
+      const toast = document.getElementById('toastMessage');
+      document.getElementById('toastText').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Fill Demo Data
+    function fillDemoData() {
+      renderFormFields(currentCategoryId);
+      updatePreviewAndCode();
+      showToast('Sample Data Loaded for ' + currentCategoryId.toUpperCase());
+    }
+
+    // Reset Form
+    function resetForm() {
+      if (confirm('Reset this form to blank?')) {
+        const d = formData[currentCategoryId];
+        Object.keys(d).forEach(k => d[k] = '');
+        renderFormFields(currentCategoryId);
+        updatePreviewAndCode();
+      }
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

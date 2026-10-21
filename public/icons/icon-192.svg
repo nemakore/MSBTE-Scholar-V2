@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" rx="40" fill="#0B3B2E"/>
+  <rect x="8" y="8" width="176" height="176" rx="32" fill="none" stroke="#D4AF37" stroke-width="3" stroke-opacity="0.8"/>
+  <g transform="translate(96, 96)">
+    <!-- Graduation Cap -->
+    <path d="M 0 -38 L 52 -18 L 0 2 L -52 -18 Z" fill="#D4AF37"/>
+    <path d="M 0 -38 L 52 -18 L 0 2 L -52 -18 Z" fill="none" stroke="#FAF6EE" stroke-width="2"/>
+    <path d="M -32 -6 L -32 20 C -32 34 32 34 32 20 L 32 -6" fill="none" stroke="#D4AF37" stroke-width="4" stroke-linecap="round"/>
+    <path d="M 40 -12 L 48 8 L 44 26" fill="none" stroke="#F1DFA4" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="44" cy="28" r="4" fill="#D4AF37"/>
+    <!-- Book Base -->
+    <path d="M -42 36 Q 0 28 0 44 Q 0 28 42 36 L 42 52 Q 0 44 0 60 Q 0 44 -42 52 Z" fill="#FAF6EE"/>
+    <path d="M 0 44 L 0 60" stroke="#0B3B2E" stroke-width="3"/>
+  </g>
+</svg>

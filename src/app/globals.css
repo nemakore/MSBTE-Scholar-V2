@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #FAF6EE;
+  --foreground: #141414;
+  --card-bg: #FFFFFF;
+  --card-fg: #141414;
+  --border-color: #E6DCC6;
+  --muted-bg: #F5EFE0;
+  --muted-fg: #5F5B52;
+
+  --emerald-primary: #0B3B2E;
+  --emerald-dark: #062D24;
+  --gold-accent: #D4AF37;
+  --gold-soft: #F1DFA4;
+  --ruby-alert: #B3202F;
+  --status-success: #1FA971;
+  --status-error: #D64545;
+
+  --font-heading: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+.dark {
+  --background: #0C0C0C;
+  --foreground: #F5F5F5;
+  --card-bg: #171717;
+  --card-fg: #EDEDED;
+  --border-color: #272727;
+  --muted-bg: #1F1F1F;
+  --muted-fg: #9E9E9E;
+
+  --emerald-primary: #124D3D;
+  --emerald-dark: #08342A;
+  --gold-accent: #E5C358;
+  --gold-soft: #5A471C;
+  --ruby-alert: #D64545;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* Custom smooth scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4AF3740;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #D4AF3780;
+}
+
+/* Mobile App Shell Phone Frame Styling */
+.mobile-app-viewport {
+  width: 100%;
+  max-width: 420px;
+  min-height: 844px;
+  margin: 0 auto;
+  position: relative;
+  background-color: var(--background);
+  box-shadow: 0 25px 60px -15px rgba(11, 59, 46, 0.25), 0 0 0 1px rgba(230, 220, 198, 0.6);
+  border-radius: 40px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .mobile-app-viewport {
+    max-width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+  }
+}
+
+/* Safe areas */
+.safe-bottom {
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+.safe-top {
+  padding-top: max(12px, env(safe-area-inset-top));
+}
